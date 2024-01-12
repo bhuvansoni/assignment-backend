@@ -5,7 +5,8 @@ from app.models import Booking, User, Category
 import uuid
 from datetime import datetime
 
-booking_bp = Blueprint('booking', __name__, url_prefix='/bookings')
+booking_bp = Blueprint("booking", __name__, url_prefix="/bookings")
+
 
 @booking_bp.route("/", methods=["GET"])
 def get_bookings():
@@ -21,7 +22,9 @@ def get_bookings():
         return jsonify({"error": "User not found"}), 404
 
     if category_id:
-        bookings = Booking.query.filter_by(user_id=user_id, category_id=category_id).all()
+        bookings = Booking.query.filter_by(
+            user_id=user_id, category_id=category_id
+        ).all()
     else:
         bookings = Booking.query.filter_by(user_id=user_id).all()
 
@@ -30,37 +33,46 @@ def get_bookings():
         user_username = User.query.get(booking.user_id).username
         category_name = Category.query.get(booking.category_id).name
 
-        response_data.append({
-            "booking_id": booking.booking_id,
-            "description": booking.description,
-            "start_time": booking.start_time,
-            "end_time": booking.end_time,
-            "user_username": user_username,
-            "category_name": category_name
-        })
+        response_data.append(
+            {
+                "booking_id": booking.booking_id,
+                "description": booking.description,
+                "start_time": booking.start_time,
+                "end_time": booking.end_time,
+                "user_username": user_username,
+                "category_name": category_name,
+            }
+        )
 
     return jsonify(bookings=response_data)
-    
+
+
 @booking_bp.route("/", methods=["POST"])
 def create_booking():
     data = request.get_json()
     required_fields = ["user_id", "category_id", "start_time", "end_time"]
 
     if not all(field in data for field in required_fields):
-        return jsonify({"error": "User ID, category ID, start time, and end time are required"}), 400
+        return (
+            jsonify(
+                {"error": "User ID, category ID, start time, and end time are required"}
+            ),
+            400,
+        )
 
     new_booking = Booking(
         user_id=data["user_id"],
         category_id=data["category_id"],
         start_time=data["start_time"],
         end_time=data["end_time"],
-        description=data.get("description", "")
+        description=data.get("description", ""),
     )
-
+    print(new_booking.booking_id, "this is the new booking_id")
     db.session.add(new_booking)
     db.session.commit()
 
     return jsonify({"message": "Booking created successfully"}), 201
+
 
 @booking_bp.route("/", methods=["PUT"])
 def update_booking():
@@ -90,6 +102,7 @@ def update_booking():
     db.session.commit()
 
     return jsonify({"message": "Booking updated successfully"}), 200
+
 
 @booking_bp.route("/", methods=["DELETE"])
 def delete_booking():
