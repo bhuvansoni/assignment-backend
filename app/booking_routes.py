@@ -31,6 +31,7 @@ def get_bookings():
         category_name = Category.query.get(booking.category_id).name
 
         response_data.append({
+            "booking_id": booking.booking_id,
             "description": booking.description,
             "start_time": booking.start_time,
             "end_time": booking.end_time,

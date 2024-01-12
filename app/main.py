@@ -14,7 +14,7 @@ origins = ['*']
 CORS(
     app,
     origins=origins,
-    methods=["GET", "POST", "OPTIONS"],
+    methods=["GET", "POST", "OPTIONS", "DELETE"],
 )
 
 from app.category_routes import category_bp
