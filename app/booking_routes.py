@@ -2,13 +2,15 @@ from flask import Blueprint, jsonify, request
 from flask_jwt_extended import jwt_required
 from app.main import db
 from app.models import Booking, User, Category
+import uuid
+from datetime import datetime
 
 booking_bp = Blueprint('booking', __name__, url_prefix='/bookings')
 
 @booking_bp.route("/", methods=["GET"])
 def get_bookings():
     data = request.get_json()
-   
+
     if "user_id" not in data:
         return jsonify({"error": "User ID is required in the request payload"}), 400
 
@@ -60,3 +62,50 @@ def create_booking():
     db.session.commit()
 
     return jsonify({"message": "Booking created successfully"}), 201
+
+@booking_bp.route("/", methods=["PUT"])
+def update_booking():
+    data = request.get_json()
+    booking_id = data.get("booking_id")
+
+    if not booking_id:
+        return jsonify({"error": "Booking ID is required"}), 400
+
+    booking = Booking.query.get(booking_id)
+
+    if not booking:
+        return jsonify({"error": "Booking not found"}), 404
+
+    # Update fields if provided
+    if "user_id" in data:
+        booking.user_id = data["user_id"]
+    if "category_id" in data:
+        booking.category_id = data["category_id"]
+    if "start_time" in data:
+        booking.start_time = data["start_time"]
+    if "end_time" in data:
+        booking.end_time = data["end_time"]
+    if "description" in data:
+        booking.description = data["description"]
+
+    db.session.commit()
+
+    return jsonify({"message": "Booking updated successfully"}), 200
+
+@booking_bp.route("/", methods=["DELETE"])
+def delete_booking():
+    data = request.get_json()
+    booking_id = data.get("booking_id")
+
+    if not booking_id:
+        return jsonify({"error": "Booking ID is required"}), 400
+
+    booking = Booking.query.get(booking_id)
+
+    if not booking:
+        return jsonify({"error": "Booking not found"}), 404
+
+    db.session.delete(booking)
+    db.session.commit()
+
+    return jsonify({"message": "Booking deleted successfully"}), 200
