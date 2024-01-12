@@ -9,13 +9,11 @@ booking_bp = Blueprint('booking', __name__, url_prefix='/bookings')
 
 @booking_bp.route("/", methods=["GET"])
 def get_bookings():
-    data = request.get_json()
+    user_id = request.args.get("user_id")
+    category_id = request.args.get("category_id")
 
-    if "user_id" not in data:
-        return jsonify({"error": "User ID is required in the request payload"}), 400
-
-    user_id = data["user_id"]
-    category_id = data.get("category_id")
+    if not user_id:
+        return jsonify({"error": "User ID is required as a query parameter"}), 400
 
     user = User.query.filter_by(user_id=user_id).first()
 
@@ -41,7 +39,7 @@ def get_bookings():
         })
 
     return jsonify(bookings=response_data)
-
+    
 @booking_bp.route("/", methods=["POST"])
 def create_booking():
     data = request.get_json()
