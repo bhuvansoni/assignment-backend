@@ -24,7 +24,9 @@ from app.booking_routes import booking_bp
 app.register_blueprint(category_bp, url_prefix='/categories')
 app.register_blueprint(user_bp, url_prefix='/users')
 app.register_blueprint(booking_bp, url_prefix='/bookings')
-
+@app.route('/health', methods=['GET'])
+def health_check():
+    return 'Health check passed'
 if __name__ == '__main__':
     # db.create_all()
-    app.run(debug=True)
+    app.run()

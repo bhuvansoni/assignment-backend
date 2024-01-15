@@ -45,8 +45,6 @@ def get_bookings():
         )
 
     return jsonify(bookings=response_data)
-
-
 @booking_bp.route("/", methods=["POST"])
 def create_booking():
     data = request.get_json()
