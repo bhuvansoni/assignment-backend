@@ -46,8 +46,8 @@ def create_booking():
         title=data['title'],
         created_by_user_id=user_id,
         category_id=data['category_id'],
-        startTime=data['startTime'],
-        endTime=data['endTime']
+        starttime=data['startTime'],
+        endtime=data['endTime']
     )
 
     db.session.add(new_booking)
