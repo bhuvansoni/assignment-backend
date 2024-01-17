@@ -4,19 +4,19 @@ from api.models import  Booking
 from api.main import db
 from datetime import datetime
 from collections import defaultdict
+from user_routes import create_user
 
 booking_bp = Blueprint('booking', __name__)
 
 @booking_bp.route('/bookings', methods=['GET'])
 def get_bookings():
+    
     user_id = request.args.get('user_id')
 
     if user_id is None:
         return jsonify({'message': 'User ID is required in the payload'}), 400
 
     bookings = Booking.query.filter_by(created_by_user_id=user_id).all()
-
-    # Organize bookings by date
     bookings_by_date = defaultdict(list)
 
     for booking in bookings:
@@ -36,11 +36,9 @@ def get_bookings():
     return jsonify({'bookings': result})
 
 @booking_bp.route('/bookings', methods=['POST'])
-@jwt_required()
 def create_booking():
-    user_id = get_jwt_identity()
     data = request.get_json()
-
+    user_id = create_user(data['name'], data['email'])
     new_booking = Booking(
         title=data['title'],
         created_by_user_id=user_id,
@@ -52,7 +50,7 @@ def create_booking():
     db.session.add(new_booking)
     db.session.commit()
 
-    return jsonify({'message': 'Booking created successfully'}), 201
+    return jsonify({'message': 'Booking created successfully', "user_id": user_id}), 201
 
 @booking_bp.route('/bookings/<int:booking_id>', methods=['DELETE'])
 @jwt_required()

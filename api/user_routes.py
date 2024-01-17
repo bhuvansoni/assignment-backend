@@ -26,19 +26,16 @@ def login():
         return jsonify({"message": "Invalid credentials"}), 401
 
 
-@auth_bp.route("/create_user", methods=["POST"])
-def create_user():
-    data = request.get_json()
-    name = data.get("name")
-    email = data.get("email")
+
+def create_user(name, email):
 
     existing_user = User.query.filter_by(email=email).first()
 
     if existing_user:
-        return jsonify({"message": "User already exists"}), 200
+        return existing_user.user_id
     else:
         new_user = User(name=name, email=email)
 
         db.session.add(new_user)
         db.session.commit()
-        return jsonify({"message": "User created successfully"}), 201
+        return  new_user.user_id
