@@ -4,7 +4,7 @@ from api.models import  Booking
 from api.main import db
 from datetime import datetime
 from collections import defaultdict
-from user_routes import create_user
+from api.user_routes import create_user
 
 booking_bp = Blueprint('booking', __name__)
 
