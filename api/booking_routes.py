@@ -112,7 +112,7 @@ def create_booking():
     return jsonify({"message": "Booking created successfully", "user_id": user_id}), 201
 
 
-@booking_bp.route("/bookings/<int:booking_id>", methods=["DELETE"])
+@booking_bp.route("/<int:booking_id>", methods=["DELETE"])
 @jwt_required()
 def delete_booking(booking_id):
     user_id = get_jwt_identity()
@@ -131,7 +131,7 @@ def delete_booking(booking_id):
         )
 
 
-@booking_bp.route("/bookings/<int:booking_id>", methods=["PUT"])
+@booking_bp.route("/<int:booking_id>", methods=["PUT"])
 @jwt_required()
 def update_booking(booking_id):
     try:
