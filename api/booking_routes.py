@@ -9,8 +9,7 @@ booking_bp = Blueprint('booking', __name__)
 
 @booking_bp.route('/bookings', methods=['GET'])
 def get_bookings():
-    data = request.get_json()
-    user_id = data.get('user_id')
+    user_id = request.args.get('user_id')
 
     if user_id is None:
         return jsonify({'message': 'User ID is required in the payload'}), 400
