@@ -29,3 +29,7 @@ app.register_blueprint(booking_bp, url_prefix='/bookings')
 @app.route('/health', methods=['GET'])
 def health_check():
     return 'Health check passed'
+
+
+if __name__ == '__main__':
+    app.run(debug=True)

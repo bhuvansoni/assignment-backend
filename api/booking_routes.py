@@ -39,6 +39,9 @@ def get_bookings():
 def create_booking():
     data = request.get_json()
     user_id = create_user(data['name'], data['email'])
+    start_time = datetime.strptime(data['startTime'], '%Y-%m-%dT%H:%M')
+    end_time = datetime.strptime(data['endTime'], '%Y-%m-%dT%H:%M')
+
     new_booking = Booking(
         title=data['title'],
         created_by_user_id=user_id,
