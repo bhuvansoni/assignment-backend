@@ -18,9 +18,9 @@ CORS(
 )
 
 
-from app.category_routes import category_bp
-from app.user_routes import auth_bp
-from app.booking_routes import booking_bp
+from category_routes import category_bp
+from user_routes import auth_bp
+from booking_routes import booking_bp
 app.register_blueprint(category_bp, url_prefix='/categories')
 app.register_blueprint(auth_bp, url_prefix='/users')
 app.register_blueprint(booking_bp, url_prefix='/bookings')

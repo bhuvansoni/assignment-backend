@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required
-from app.models import  Category
-from app.main import db
+from models import  Category
+from main import db
 
 category_bp = Blueprint('category', __name__)
 
