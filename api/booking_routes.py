@@ -129,3 +129,37 @@ def delete_booking(booking_id):
             ),
             404,
         )
+
+
+@booking_bp.route("/bookings/<int:booking_id>", methods=["PUT"])
+@jwt_required()
+def update_booking(booking_id):
+    try:
+        user_id = get_jwt_identity()
+
+        user = User.query.filter_by(user_id=user_id).first()
+        if not user:
+            return jsonify({"message": "User not found"}), 404
+
+        if not user.is_admin:
+            booking = Booking.query.filter_by(booking_id=booking_id, created_by_user_id=user_id).first()
+            if not booking:
+                return jsonify({"message": "Booking not found or you do not have permission to update"}), 404
+
+        booking = Booking.query.get(booking_id)
+        if not booking:
+            return jsonify({"message": "Booking not found"}), 404
+
+
+        data = request.get_json()
+        booking.title = data.get("title", booking.title)
+        booking.category_id = data.get("category_id", booking.category_id)
+        booking.starttime = datetime.strptime(data.get("startTime", booking.starttime), "%Y-%m-%dT%H:%M")
+        booking.endtime = datetime.strptime(data.get("endTime", booking.endtime), "%Y-%m-%dT%H:%M")
+
+        db.session.commit()
+
+        return jsonify({"message": "Booking updated successfully"}), 200
+
+    except Exception as e:
+        return jsonify({"message": f"Error occurred while updating booking: {str(e)}"}), 500
