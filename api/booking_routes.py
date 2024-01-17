@@ -97,7 +97,7 @@ def create_booking():
 @jwt_required()
 def delete_booking(booking_id):
     user_id = get_jwt_identity()
-    booking = Booking.query.filter_by(booking_id=booking_id, created_by_user_id=user_id).first()
+    booking = Booking.query.filter_by(booking_id=booking_id).first()
 
     if booking:
         db.session.delete(booking)
