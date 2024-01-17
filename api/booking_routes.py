@@ -154,8 +154,8 @@ def update_booking(booking_id):
         data = request.get_json()
         booking.title = data.get("title", booking.title)
         booking.category_id = data.get("category_id", booking.category_id)
-        booking.starttime = datetime.strptime(data.get("startTime", booking.starttime), "%Y-%m-%dT%H:%M")
-        booking.endtime = datetime.strptime(data.get("endTime", booking.endtime), "%Y-%m-%dT%H:%M")
+        booking.starttime = data.get("startTime", booking.starttime)
+        booking.endtime = data.get("endTime", booking.endtime)
 
         db.session.commit()
 
