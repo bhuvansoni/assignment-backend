@@ -4,7 +4,7 @@ from api.models import  Booking
 from api.main import db
 from datetime import datetime
 from collections import defaultdict
-from api.user_routes import create_user
+from api.user_routes import create_user, User
 
 booking_bp = Blueprint('booking', __name__)
 
@@ -35,6 +35,44 @@ def get_bookings():
 
     return jsonify({'bookings': result})
 
+
+@booking_bp.route('/get-bookings-admin', methods=['GET'])
+@jwt_required()  # You may want to add additional checks for admin role
+def get_bookings_admin():
+    try:
+        # Get user ID from the JWT token
+        user_id = get_jwt_identity()
+
+        # Check if the user is an admin (you may have a different way to determine admin status)
+        user = User.query.filter_by(user_id=user_id, is_admin=True).first()
+        if not user:
+            return jsonify({'message': 'User is not an admin'}), 403
+
+        # Fetch all bookings
+        bookings = Booking.query.all()
+
+        # Organize bookings by date
+        bookings_by_date = defaultdict(list)
+
+        for booking in bookings:
+            start_datetime = booking.starttime.strftime('%d/%m/%Y')
+            bookings_by_date[start_datetime].append({
+                'id': f'booking_{booking.booking_id}',
+                'title': booking.title,
+                'created_by': booking.created_by_user.name,
+                'email': booking.created_by_user.email,
+                'startDate': booking.starttime.strftime('%d/%m/%Y %H:%M'),
+                'endDate': booking.endtime.strftime('%d/%m/%Y %H:%M'),
+            })
+
+        # Convert defaultdict to a regular dictionary
+        result = dict(bookings_by_date)
+
+        return jsonify({'bookings': result}), 200
+
+    except Exception as e:
+        return jsonify({'message': 'Error occurred while fetching bookings', 'error': str(e)}), 500
+    
 @booking_bp.route('/bookings', methods=['POST'])
 def create_booking():
     data = request.get_json()
@@ -46,8 +84,8 @@ def create_booking():
         title=data['title'],
         created_by_user_id=user_id,
         category_id=data['category_id'],
-        starttime=data['startTime'],
-        endtime=data['endTime']
+        starttime=start_time,
+        endtime=end_time
     )
 
     db.session.add(new_booking)
