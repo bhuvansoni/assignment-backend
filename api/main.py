@@ -14,7 +14,7 @@ origins = ['*']
 CORS(
     app,
     origins=origins,
-    methods=["GET", "POST", "OPTIONS", "DELETE"],
+    methods=["GET", "POST", "OPTIONS", "DELETE", "PUT"],
 )
 
 
