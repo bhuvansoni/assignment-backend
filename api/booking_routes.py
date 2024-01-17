@@ -22,7 +22,7 @@ def get_bookings():
     for booking in bookings:
         start_datetime = booking.starttime.strftime('%d/%m/%Y')
         bookings_by_date[start_datetime].append({
-            'id': f'booking_{booking.booking_id}',
+            'id': booking.booking_id,
             'title': booking.title,
             'created_by': booking.created_by_user.name, 
             'email': booking.created_by_user.email, 
@@ -57,7 +57,7 @@ def get_bookings_admin():
         for booking in bookings:
             start_datetime = booking.starttime.strftime('%d/%m/%Y')
             bookings_by_date[start_datetime].append({
-                'id': f'booking_{booking.booking_id}',
+                'id': booking.booking_id,
                 'title': booking.title,
                 'created_by': booking.created_by_user.name,
                 'email': booking.created_by_user.email,
